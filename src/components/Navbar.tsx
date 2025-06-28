@@ -1,8 +1,7 @@
 import { Link } from "react-router-dom";
-import { TfiSearch } from "react-icons/tfi";
-import { FiMenu, FiX } from "react-icons/fi";
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, spring } from "framer-motion";
+import { logoPublic } from "@/utils/images";
 
 const Navbar = () => {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -25,12 +24,7 @@ const Navbar = () => {
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-
-    if (menuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
+    document.body.style.overflow = menuOpen ? "hidden" : "auto";
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -38,18 +32,12 @@ const Navbar = () => {
     };
   }, [menuOpen]);
 
-  // Animation variants
   const navbarVariants = {
     hidden: { y: -50, opacity: 0 },
     visible: {
       y: 0,
       opacity: 1,
-      transition: {
-        type: "spring",
-        stiffness: 80,
-        damping: 14,
-        duration: 0.6,
-      },
+      transition: { type: spring, stiffness: 80, damping: 14, duration: 0.6 },
     },
   };
 
@@ -57,24 +45,18 @@ const Navbar = () => {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        delayChildren: 0.3,
-        staggerChildren: 0.1,
-      },
+      transition: { delayChildren: 0.3, staggerChildren: 0.1 },
     },
   };
 
   const linkVariants = {
     hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-    },
+    visible: { y: 0, opacity: 1 },
   };
 
   return (
     <motion.nav
-      className="bg-primary flex justify-between items-center w-[95%] lg:h-[65px] h-[60px] max-w-content my-6 mb-12 lg:px-12 px-6 py-4 text-white z-50 shadow-md rounded-full relative"
+      className="bg-primary/90 backdrop-blur-md flex justify-between items-center w-[95%] lg:h-[70px] h-[60px] max-w-content my-6 mb-12 lg:px-8 px-4 py-4 text-white z-50 shadow-xl rounded-full relative border border-white/10"
       variants={navbarVariants}
       initial="hidden"
       animate="visible"
@@ -95,8 +77,8 @@ const Navbar = () => {
 
       {/* Mobile Logo */}
       <motion.img
-        src="./images/logo.png"
-        className="h-[45px] lg:hidden object-cover"
+        src={logoPublic}
+        className="h-[42px] lg:hidden object-contain"
         alt="الشعار"
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
@@ -105,75 +87,55 @@ const Navbar = () => {
 
       {/* Desktop Navigation */}
       <div className="hidden lg:flex items-center w-full h-full gap-6">
-        {/* Desktop Logo */}
-        <motion.img
-          src="./images/logo.png"
-          className="h-[55px] ml-16 object-cover"
-          alt="الشعار"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{
-            delay: 0.6,
-            type: "spring",
-            stiffness: 200,
-            damping: 16,
-          }}
-        />
-        {/* Desktop Links */}
+        <a href="/">
+          <motion.img
+            src="./images/logo.png"
+            className="h-[50px] ml-14 object-contain"
+            alt="الشعار"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{
+              delay: 0.6,
+              type: "spring",
+              stiffness: 200,
+              damping: 16,
+            }}
+          />
+        </a>
+
+        {/* Links */}
         <motion.div
-          className="flex items-center gap-6 font-bold text-lg h-fit"
+          className="flex items-center gap-6 font-semibold text-base h-fit"
           variants={linkContainerVariants}
           initial="hidden"
           animate="visible"
         >
-          <motion.span variants={linkVariants}>
-            <Link
-              to="/"
-              className="hover:text-secondary hover:underline transition-colors duration-300"
-            >
-              الصفحة الرئيسية
-            </Link>
-          </motion.span>
-          <motion.span variants={linkVariants}>
-            <Link
-              to="/"
-              className="hover:text-secondary hover:underline transition-colors duration-300"
-            >
-              المشاريع
-            </Link>
-          </motion.span>
-          <motion.span variants={linkVariants}>
-            <Link
-              to="/"
-              className="hover:text-secondary hover:underline transition-colors duration-300"
-            >
-              من نحن
-            </Link>
-          </motion.span>
-          <motion.span variants={linkVariants}>
-            <Link
-              to="/"
-              className="hover:text-secondary hover:underline transition-colors duration-300"
-            >
-              تبرع الآن
-            </Link>
-          </motion.span>
-          <motion.span variants={linkVariants}>
-            <Link
-              to="/"
-              className="hover:text-secondary hover:underline transition-colors duration-300"
-            >
-              اتصل بنا
-            </Link>
-          </motion.span>
+          {[
+            { label: "الصفحة الرئيسية", to: "/" },
+            { label: "المشاريع", to: "/projects" },
+            { label: "من نحن", to: "/" },
+            { label: "تبرع الآن", to: "/" },
+            { label: "اتصل بنا", to: "/" },
+          ].map((link, i) => (
+            <motion.span key={i} variants={linkVariants}>
+              <Link
+                to={link.to}
+                className="hover:text-secondary transition-colors duration-300"
+              >
+                {link.label}
+              </Link>
+            </motion.span>
+          ))}
         </motion.div>
       </div>
-      <div className="flex max-lg:hidden items-center gap-3">
+
+      {/* Desktop Search & Login */}
+      <div className="flex max-lg:hidden items-center gap-4">
         <AnimatePresence>
           {searchOpen && (
             <motion.input
               initial={{ width: 0, opacity: 0 }}
-              animate={{ width: 270, opacity: 1 }}
+              animate={{ width: 240, opacity: 1 }}
               exit={{ width: 0, opacity: 0 }}
               transition={{ duration: 0.3 }}
               type="text"
@@ -182,12 +144,20 @@ const Navbar = () => {
             />
           )}
         </AnimatePresence>
+
         <button
           className="text-white hover:text-secondary text-xl cursor-pointer"
           onClick={() => setSearchOpen(!searchOpen)}
         >
           <i className="fa-solid fa-magnifying-glass"></i>
         </button>
+
+        <Link
+          to="/auth"
+          className="bg-white text-primary text-sm font-semibold rounded-full w-[100px] text-center py-2 hover:bg-secondary hover:text-white transition-all duration-300 shadow-md"
+        >
+          تسجيل الدخول
+        </Link>
       </div>
 
       {/* Mobile Menu */}
@@ -199,7 +169,7 @@ const Navbar = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="lg:hidden absolute top-full left-0 right-0 bg-primary rounded-lg shadow-lg mt-4 py-4 px-6 z-50"
+            className="lg:hidden absolute top-full left-0 right-0 bg-primary/95 backdrop-blur-md rounded-lg shadow-xl mt-4 py-4 px-6 z-50 border border-white/10"
           >
             <motion.ul
               initial={{ y: -20, opacity: 0 }}
@@ -208,53 +178,25 @@ const Navbar = () => {
               transition={{ delay: 0.1, staggerChildren: 0.1 }}
               className="flex flex-col gap-4"
             >
-              <motion.li whileTap={{ scale: 0.98 }}>
-                <Link
-                  to="/"
-                  className="block py-2 hover:text-secondary hover:underline"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  الصفحة الرئيسية
-                </Link>
-              </motion.li>
-              <motion.li whileTap={{ scale: 0.98 }}>
-                <Link
-                  to="/"
-                  className="block py-2 hover:text-secondary hover:underline"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  المشاريع
-                </Link>
-              </motion.li>
-              <motion.li whileTap={{ scale: 0.98 }}>
-                <Link
-                  to="/"
-                  className="block py-2 hover:text-secondary hover:underline"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  من نحن
-                </Link>
-              </motion.li>
-              <motion.li whileTap={{ scale: 0.98 }}>
-                <Link
-                  to="/"
-                  className="block py-2 hover:text-secondary hover:underline"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  تبرع الآن
-                </Link>
-              </motion.li>
-              <motion.li whileTap={{ scale: 0.98 }}>
-                <Link
-                  to="/"
-                  className="block py-2 hover:text-secondary hover:underline"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  اتصل بنا
-                </Link>
-              </motion.li>
+              {[
+                "الصفحة الرئيسية",
+                "المشاريع",
+                "من نحن",
+                "تبرع الآن",
+                "اتصل بنا",
+              ].map((label, i) => (
+                <motion.li key={i} whileTap={{ scale: 0.98 }}>
+                  <Link
+                    to="/"
+                    className="block py-2 hover:text-secondary"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    {label}
+                  </Link>
+                </motion.li>
+              ))}
 
-              {/* Mobile Search Inside Menu */}
+              {/* Mobile Search */}
               <motion.li
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -281,6 +223,17 @@ const Navbar = () => {
                     )}
                   </AnimatePresence>
                 </div>
+              </motion.li>
+
+              {/* Mobile Login Button */}
+              <motion.li whileTap={{ scale: 0.98 }}>
+                <Link
+                  to="/auth"
+                  className="block py-2 mt-2 text-center bg-white text-primary font-semibold rounded-full hover:bg-secondary hover:text-white transition-all duration-300 shadow-md"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  تسجيل الدخول
+                </Link>
               </motion.li>
             </motion.ul>
           </motion.div>

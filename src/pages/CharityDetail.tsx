@@ -1,9 +1,5 @@
 import {
-  Calendar,
-  Heart,
   MapPin,
-  Users,
-  Target,
   TrendingUp,
   ArrowRight,
 } from "lucide-react";
@@ -15,7 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { Link, useParams } from "react-router-dom";
 import { charityPrograms } from "@/utils/data";
 import { formatCurrency } from "@/helper/format_currency";
-import { motion } from "framer-motion";
+import { motion, spring } from "framer-motion";
 
 export default function CharityDetail() {
   const { id } = useParams();
@@ -37,7 +33,7 @@ export default function CharityDetail() {
       y: 0,
       transition: {
         delay: custom * 0.15,
-        type: "spring",
+        type: spring,
         stiffness: 90,
         damping: 18,
       },

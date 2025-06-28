@@ -1,5 +1,5 @@
 import { Button } from "../ui/button";
-import { motion } from "framer-motion";
+import { cubicBezier, motion } from "framer-motion";
 
 export default function Banner() {
   // Animation for text and button
@@ -8,7 +8,7 @@ export default function Banner() {
     visible: {
       opacity: 1,
       x: 0,
-      transition: { duration: 0.8, ease: [0.2, 0.8, 0.25, 1] }, // Valid cubic-bezier easing
+      transition: { duration: 0.8, ease: cubicBezier(0.2, 0.8, 0.25, 1) },
     },
   };
 
@@ -21,7 +21,7 @@ export default function Banner() {
       transition: {
         delay: index * 0.15,
         duration: 0.6,
-        ease: [0.2, 0.8, 0.25, 1], // Valid easing array
+        ease: cubicBezier(0.2, 0.8, 0.25, 1),
       },
     }),
   };
@@ -33,8 +33,7 @@ export default function Banner() {
         <motion.div
           variants={textVariants}
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
+          animate="visible"
           className="space-y-6 text-right"
         >
           <div className="space-y-4">
@@ -56,53 +55,38 @@ export default function Banner() {
 
         {/* Left side - Stacked Images */}
         <div className="relative h-[600px] md:h-[700px] max-w-full">
-          {/* First image - Background */}
-          <motion.div
-            custom={0}
-            variants={imageVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="absolute top-0 right-0 w-[288px] h-[320px] transform rotate-3 shadow-2xl rounded-lg overflow-hidden"
-          >
-            <img
-              src="./images/banner-1.png"
-              className="w-[288px] h-[320px] object-cover bg-gray-600"
-              alt="صورة 1"
-            />
-          </motion.div>
-
-          {/* Second image - Middle */}
-          <motion.div
-            custom={1}
-            variants={imageVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="absolute top-25 left-4 sm:left-8 w-[288px] h-[320px] transform -rotate-2 shadow-2xl rounded-lg overflow-hidden z-10"
-          >
-            <img
-              src="./images/banner-2.png"
-              className="w-[288px] h-[320px] object-cover bg-gray-600"
-              alt="صورة 2"
-            />
-          </motion.div>
-
-          {/* Third image - Foreground */}
-          <motion.div
-            custom={2}
-            variants={imageVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="absolute bottom-20 right-6 sm:right-12 w-[288px] h-[320px] transform rotate-1 shadow-2xl rounded-lg overflow-hidden z-20"
-          >
-            <img
-              src="./images/banner-3.png"
-              className="w-[288px] h-[320px] object-cover bg-gray-600"
-              alt="صورة 3"
-            />
-          </motion.div>
+          {[0, 1, 2].map((index) => {
+            const positions = [
+              { top: 0, right: 0, rotate: 3, z: 0 },
+              { top: 100, left: 16, rotate: -2, z: 10 },
+              { bottom: 80, right: 24, rotate: 1, z: 20 },
+            ];
+            const pos = positions[index];
+            const imageSrc = `./images/banner-${index + 1}.png`;
+            return (
+              <motion.div
+                key={index}
+                custom={index}
+                variants={imageVariants}
+                initial="hidden"
+                animate="visible"
+                className={`absolute w-[288px] h-[320px] shadow-2xl rounded-lg overflow-hidden z-[${pos.z}]`}
+                style={{
+                  top: pos.top,
+                  bottom: pos.bottom,
+                  right: pos.right,
+                  left: pos.left,
+                  transform: `rotate(${pos.rotate}deg)`,
+                }}
+              >
+                <img
+                  src={imageSrc}
+                  alt={`صورة ${index + 1}`}
+                  className="w-full h-full object-cover bg-gray-600"
+                />
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </div>

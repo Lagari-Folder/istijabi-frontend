@@ -1,4 +1,3 @@
-import { Calendar, Heart, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import KeyValueCharityBox from "../charity/KeyValueCharityBox";
 import { formatCurrency } from "@/helper/format_currency";
-import { motion } from "framer-motion";
+import { motion, spring } from "framer-motion";
 import type { CharityProgram } from "@/types/program";
 
 const cardVariants = {
@@ -20,7 +19,7 @@ const cardVariants = {
     opacity: 1,
     y: 0,
     transition: {
-      type: "spring",
+      type: spring,
       stiffness: 100,
       damping: 15,
     },
@@ -40,7 +39,6 @@ export function CharityCard({ program }: { program: CharityProgram }) {
       variants={cardVariants}
       initial="hidden"
       animate="visible"
-      whileHover="hover"
       className="w-full rounded-xl max-w-[400px] "
     >
       <Card
@@ -66,7 +64,7 @@ export function CharityCard({ program }: { program: CharityProgram }) {
           <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 line-clamp-2">
             {program.title}
           </h3>
-          <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+          <p className="text-gray-600 text-sm mb-4 line-clamp-2 h-[50px]">
             {program.description}
           </p>
 
